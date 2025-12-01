@@ -17,6 +17,14 @@
   }
 }
 
+@layer utilities {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+}
+
 @layer components {
   .btn-primary {
     @apply relative bg-gradient-to-r from-accent to-cyan-500 text-white px-8 py-3.5 rounded-xl font-semibold 
@@ -24,7 +32,7 @@
            transform hover:scale-105 active:scale-95 
            transition-all duration-300 ease-out
            focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
-           overflow-hidden;
+           overflow-hidden gpu-accelerated;
   }
 
   .btn-primary.group::before,
@@ -47,14 +55,14 @@
            hover:bg-white/20 hover:border-white/50 
            transform hover:scale-105 active:scale-95
            transition-all duration-300 ease-out
-           focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary;
+           focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary gpu-accelerated;
   }
 
   .card {
     @apply bg-white rounded-2xl shadow-lg hover:shadow-2xl 
            transform hover:-translate-y-2 
            transition-all duration-300 ease-out
-           border border-gray-100;
+           border border-gray-100 gpu-accelerated;
   }
 
   .card-hover {
@@ -73,7 +81,7 @@
   }
 
   .glass {
-    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+    @apply bg-white/70 backdrop-blur-md border border-white/30 shadow-sm;
   }
 
   .skeleton {
@@ -90,7 +98,7 @@
   }
 
   .glass-card {
-    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
+    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-xl shadow-black/5;
   }
 
   .glow-effect {
@@ -121,4 +129,16 @@
     border-image: linear-gradient(135deg, #06b6d4, #8b5cf6) 1;
   }
 }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .glass, .glass-card {
+    @apply backdrop-blur-sm; /* Reduce blur radius for performance */
+  }
+  
+  * {
+    animation-duration: 0s !important; /* Optional: Disable CSS animations if needed, but keeping for now */
+  }
+}
+
 

@@ -1,31 +1,34 @@
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
 import { useQuery } from '@tanstack/react-query';
 import { getReviews } from '../lib/api';
 import Hero from '../components/Hero';
 import ServiceCard from '../components/ServiceCard';
+import { staggerContainer, fadeUp, scaleIn, mobileBlobVariants, desktopBlobVariants } from '../lib/animationUtils';
 
 function StatCard({ number, label, icon, index = 0 }) {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  const scaleUp = {
+    hidden: { scale: 0 },
+    visible: {
+      scale: 1,
+      transition: {
+        delay: index * 0.1 + 0.2,
+        type: 'spring',
+        stiffness: 200
+      }
+    }
+  };
 
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="text-center p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300"
+      variants={fadeUp}
+      custom={index}
+      className="text-center p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 gpu-accelerated"
     >
       <div className="text-4xl mb-4">{icon}</div>
       <motion.div
         className="text-4xl md:text-5xl font-bold gradient-text mb-2"
-        initial={{ scale: 0 }}
-        animate={inView ? { scale: 1 } : { scale: 0 }}
-        transition={{ delay: index * 0.1 + 0.2, type: 'spring', stiffness: 200 }}
+        variants={scaleUp}
       >
         {number}
       </motion.div>
@@ -35,10 +38,7 @@ function StatCard({ number, label, icon, index = 0 }) {
 }
 
 function FeatureShowcase() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  const isMobile = window.innerWidth < 768;
 
   const features = [
     {
@@ -68,66 +68,55 @@ function FeatureShowcase() {
   ];
 
   return (
-    <section ref={ref} className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+    <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute top-20 right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          className="absolute top-20 right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl will-change-transform"
+          variants={isMobile ? mobileBlobVariants : desktopBlobVariants([0, 50, 0], [0, 30, 0])}
+          animate="animate"
         />
         <motion.div
-          className="absolute bottom-20 left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            x: [0, -50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          className="absolute bottom-20 left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl will-change-transform"
+          variants={isMobile ? mobileBlobVariants : desktopBlobVariants([0, -50, 0], [0, -30, 0])}
+          animate="animate"
         />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+          <motion.h2 variants={fadeUp} className="text-4xl md:text-5xl font-bold text-primary mb-4">
             Why Choose <span className="gradient-text">Biogleam</span>?
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-xl text-gray-600 max-w-2xl mx-auto">
             We combine cutting-edge technology with beautiful design to create digital experiences that drive results.
-          </p>
+          </motion.p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={staggerContainer}
+        >
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 50 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              variants={fadeUp}
               whileHover={{ y: -10, scale: 1.05 }}
-              className="relative group"
+              className="relative group gpu-accelerated"
             >
               <div className="h-full p-8 rounded-2xl bg-white border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
                 {/* Gradient background on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
-                
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`} />
+
                 <div className="relative z-10">
                   <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
                     {feature.icon}
@@ -140,40 +129,30 @@ function FeatureShowcase() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
 
 function ReviewCard({ review, index = 0 }) {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      variants={fadeUp}
+      custom={index}
       whileHover={{ y: -8 }}
-      className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+      className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 gpu-accelerated"
     >
       <div className="flex items-center mb-4">
         {[...Array(5)].map((_, i) => (
-          <motion.svg
+          <svg
             key={i}
             className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
             fill="currentColor"
             viewBox="0 0 20 20"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
-            transition={{ delay: index * 0.1 + i * 0.05 }}
           >
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </motion.svg>
+          </svg>
         ))}
       </div>
       <p className="text-gray-700 mb-6 leading-relaxed italic">"{review.reviewText}"</p>
@@ -202,11 +181,6 @@ function ReviewCard({ review, index = 0 }) {
 }
 
 export default function Home() {
-  const [statsRef, statsInView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
     queryKey: ['reviews', 'featured'],
     queryFn: () => getReviews({ featured: true, limit: 6 }),
@@ -230,24 +204,31 @@ export default function Home() {
       />
 
       {/* Stats Section */}
-      <section ref={statsRef} className="py-16 bg-gradient-to-br from-primary via-slate-900 to-primary text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+      <section className="py-16 bg-gradient-to-br from-primary via-slate-900 to-primary text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.6 }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Impact in Numbers</h2>
-            <p className="text-gray-300 text-lg">Delivering excellence across industries</p>
+            <motion.h2 variants={fadeUp} className="text-3xl md:text-4xl font-bold mb-4">Our Impact in Numbers</motion.h2>
+            <motion.p variants={fadeUp} className="text-gray-300 text-lg">Delivering excellence across industries</motion.p>
           </motion.div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+          >
             <StatCard number="200+" label="Projects Delivered" icon="🚀" index={0} />
             <StatCard number="150+" label="Happy Clients" icon="😊" index={1} />
             <StatCard number="50+" label="Industries Served" icon="🏢" index={2} />
             <StatCard number="99%" label="Client Satisfaction" icon="⭐" index={3} />
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -255,20 +236,26 @@ export default function Home() {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            variants={staggerContainer}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+            <motion.h2 variants={fadeUp} className="text-4xl md:text-5xl font-bold text-primary mb-4">
               What We <span className="gradient-text">Offer</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-xl text-gray-600 max-w-2xl mx-auto">
               Comprehensive web solutions tailored to your business needs
-            </p>
+            </motion.p>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
             <ServiceCard
               title="Custom Design"
               description="Brand-first websites that convert visitors into customers."
@@ -302,7 +289,7 @@ export default function Home() {
               ]}
               index={2}
             />
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -313,18 +300,18 @@ export default function Home() {
       <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            variants={staggerContainer}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+            <motion.h2 variants={fadeUp} className="text-4xl md:text-5xl font-bold text-primary mb-4">
               What Our <span className="gradient-text">Clients Say</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-xl text-gray-600 max-w-2xl mx-auto">
               Don't just take our word for it - hear from businesses we've helped grow
-            </p>
+            </motion.p>
           </motion.div>
           {reviewsLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -343,11 +330,17 @@ export default function Home() {
               ))}
             </div>
           ) : reviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={staggerContainer}
+            >
               {reviews.slice(0, 6).map((review, index) => (
                 <ReviewCard key={review.id} review={review} index={index} />
               ))}
-            </div>
+            </motion.div>
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">No reviews available yet.</p>
@@ -360,18 +353,24 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            variants={staggerContainer}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl font-bold text-primary mb-4">Trusted by Industry Leaders</h2>
-            <p className="text-gray-600 mb-8">
+            <motion.h2 variants={fadeUp} className="text-3xl font-bold text-primary mb-4">Trusted by Industry Leaders</motion.h2>
+            <motion.p variants={fadeUp} className="text-gray-600 mb-8">
               We've helped restaurants, hotels, e-commerce stores, fitness centers, interior designers, and photo studios establish their online presence.
-            </p>
+            </motion.p>
           </motion.div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+          >
             {[
               { name: 'Restaurant', icon: '🍽️', color: 'from-orange-400 to-red-500' },
               { name: 'Hotel', icon: '🏨', color: 'from-blue-400 to-cyan-500' },
@@ -382,12 +381,9 @@ export default function Home() {
             ].map((client, index) => (
               <motion.div
                 key={client.name}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                variants={scaleIn}
                 whileHover={{ scale: 1.1, y: -5 }}
-                className="h-32 rounded-2xl bg-gradient-to-br bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl flex flex-col items-center justify-center transition-all duration-300 group cursor-pointer"
+                className="h-32 rounded-2xl bg-gradient-to-br bg-white border-2 border-gray-100 shadow-lg hover:shadow-xl flex flex-col items-center justify-center transition-all duration-300 group cursor-pointer gpu-accelerated"
               >
                 <div className={`text-4xl mb-2 transform group-hover:scale-110 transition-transform`}>
                   {client.icon}
@@ -397,25 +393,26 @@ export default function Home() {
                 </p>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-accent via-cyan-500 to-purple-500 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          variants={staggerContainer}
           className="container mx-auto px-4 text-center relative z-10"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Shine Online?</h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+          <motion.h2 variants={fadeUp} className="text-4xl md:text-5xl font-bold mb-6">Ready to Shine Online?</motion.h2>
+          <motion.p variants={fadeUp} className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
             Let's discuss how we can help transform your business with a stunning website
-          </p>
+          </motion.p>
           <motion.div
+            variants={fadeUp}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="inline-block"

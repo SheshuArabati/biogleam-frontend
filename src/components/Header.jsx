@@ -30,11 +30,10 @@ export default function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50'
-          : 'bg-primary/95 backdrop-blur-lg'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? 'bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50'
+        : 'bg-primary/95 backdrop-blur-lg'
+        }`}
     >
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
@@ -63,7 +62,7 @@ export default function Header() {
           {/* Desktop menu */}
           <div className="hidden md:flex items-center space-x-1">
             {navLinks.map((link, index) => {
-              const isActive = location.pathname === link.to;
+              const isActive = location.pathname === link.to || location.pathname.startsWith(`${link.to}/`);
               return (
                 <motion.div
                   key={link.to}
@@ -73,15 +72,14 @@ export default function Header() {
                 >
                   <Link
                     to={link.to}
-                    className={`relative px-4 py-2 rounded-lg transition-colors ${
-                      scrolled
-                        ? isActive
-                          ? 'text-accent font-semibold'
-                          : 'text-primary hover:text-accent'
-                        : isActive
+                    className={`relative px-4 py-2 rounded-lg transition-colors ${scrolled
+                      ? isActive
+                        ? 'text-accent font-semibold'
+                        : 'text-primary hover:text-accent'
+                      : isActive
                         ? 'text-accent font-semibold'
                         : 'text-white/90 hover:text-white'
-                    }`}
+                      }`}
                   >
                     {link.label}
                     {isActive && (
@@ -103,11 +101,10 @@ export default function Header() {
               >
                 <Link
                   to="/admin/dashboard"
-                  className={`px-4 py-2 rounded-lg transition-colors ${
-                    scrolled
-                      ? 'text-primary hover:text-accent'
-                      : 'text-white/90 hover:text-white'
-                  }`}
+                  className={`px-4 py-2 rounded-lg transition-colors ${scrolled
+                    ? 'text-primary hover:text-accent'
+                    : 'text-white/90 hover:text-white'
+                    }`}
                 >
                   Admin
                 </Link>
@@ -130,9 +127,8 @@ export default function Header() {
           {/* Mobile menu button */}
           <motion.button
             whileTap={{ scale: 0.9 }}
-            className={`md:hidden p-2 rounded-lg transition-colors ${
-              scrolled ? 'text-primary' : 'text-white'
-            }`}
+            className={`md:hidden p-2 rounded-lg transition-colors ${scrolled ? 'text-primary' : 'text-white'
+              }`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -175,11 +171,10 @@ export default function Header() {
                 >
                   <Link
                     to={link.to}
-                    className={`block py-3 px-4 rounded-lg transition-colors ${
-                      scrolled
-                        ? 'text-primary hover:bg-gray-100'
-                        : 'text-white hover:bg-white/10'
-                    }`}
+                    className={`block py-3 px-4 rounded-lg transition-colors ${scrolled
+                      ? 'text-primary hover:bg-gray-100'
+                      : 'text-white hover:bg-white/10'
+                      }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {link.label}
@@ -194,11 +189,10 @@ export default function Header() {
                 >
                   <Link
                     to="/admin/dashboard"
-                    className={`block py-3 px-4 rounded-lg transition-colors ${
-                      scrolled
-                        ? 'text-primary hover:bg-gray-100'
-                        : 'text-white hover:bg-white/10'
-                    }`}
+                    className={`block py-3 px-4 rounded-lg transition-colors ${scrolled
+                      ? 'text-primary hover:bg-gray-100'
+                      : 'text-white hover:bg-white/10'
+                      }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Admin

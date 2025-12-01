@@ -17,11 +17,17 @@ const queryClient = new QueryClient({
 });
 
 // Component to scroll to top on route change
+// Component to scroll to top on route change
 function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Force instant scroll to top on route change, overriding CSS smooth scroll
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
   }, [pathname]);
 
   return null;

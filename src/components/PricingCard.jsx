@@ -23,18 +23,17 @@ export default function PricingCard({
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ y: -12, scale: popular ? 1.03 : 1.02 }}
-      className={`relative card-hover p-8 group ${
-        popular ? 'border-2 border-accent shadow-glow' : ''
-      }`}
+      className={`relative card-hover p-8 group ${popular ? 'border-2 border-accent shadow-glow' : ''
+        }`}
     >
       {popular && (
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={inView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
           transition={{ delay: index * 0.1 + 0.3, type: 'spring', stiffness: 200 }}
-          className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"
+          className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 w-max"
         >
-          <span className="bg-gradient-to-r from-accent to-cyan-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-accent/50">
+          <span className="bg-gradient-to-r from-accent to-cyan-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg shadow-accent/50 whitespace-nowrap">
             ⭐ Popular
           </span>
         </motion.div>
@@ -54,7 +53,7 @@ export default function PricingCard({
         >
           {name}
         </motion.h3>
-        
+
         <motion.p
           className="text-gray-600 mb-6"
           initial={{ opacity: 0 }}
@@ -63,7 +62,7 @@ export default function PricingCard({
         >
           {description}
         </motion.p>
-        
+
         <motion.div
           className="mb-8"
           initial={{ opacity: 0, scale: 0.8 }}
@@ -72,7 +71,7 @@ export default function PricingCard({
         >
           <span className="text-5xl font-bold gradient-text">{price}</span>
         </motion.div>
-        
+
         <ul className="space-y-4 mb-8">
           {features.map((feature, idx) => (
             <motion.li
@@ -99,18 +98,17 @@ export default function PricingCard({
             </motion.li>
           ))}
         </ul>
-        
+
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
           <Link
             to={`/contact${name.toLowerCase() !== 'enterprise' ? `?package=${name.toLowerCase()}` : ''}`}
-            className={`block text-center py-4 rounded-xl font-semibold transition-all duration-300 ${
-              popular
-                ? 'bg-gradient-to-r from-accent to-cyan-500 text-white shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40'
-                : 'bg-primary text-white hover:bg-slate-800 shadow-lg hover:shadow-xl'
-            }`}
+            className={`block text-center py-4 rounded-xl font-semibold transition-all duration-300 ${popular
+              ? 'bg-gradient-to-r from-accent to-cyan-500 text-white shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40'
+              : 'bg-primary text-white hover:bg-slate-800 shadow-lg hover:shadow-xl'
+              }`}
           >
             {ctaText}
           </Link>
